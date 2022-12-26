@@ -1,5 +1,5 @@
 
-.. image:: https://readthedocs.org/projects/iterproxy/badge/?version=latest
+.. .. image:: https://readthedocs.org/projects/iterproxy/badge/?version=latest
     :target: https://iterproxy.readthedocs.io/index.html
     :alt: Documentation Status
 
@@ -24,13 +24,13 @@
 ------
 
 
-.. image:: https://img.shields.io/badge/Link-Document-blue.svg
+.. .. image:: https://img.shields.io/badge/Link-Document-blue.svg
     :target: https://iterproxy.readthedocs.io/index.html
 
-.. image:: https://img.shields.io/badge/Link-API-blue.svg
+.. .. image:: https://img.shields.io/badge/Link-API-blue.svg
     :target: https://iterproxy.readthedocs.io/py-modindex.html
 
-.. image:: https://img.shields.io/badge/Link-Source_Code-blue.svg
+.. .. image:: https://img.shields.io/badge/Link-Source_Code-blue.svg
     :target: https://iterproxy.readthedocs.io/py-modindex.html
 
 .. image:: https://img.shields.io/badge/Link-Install-blue.svg
@@ -51,8 +51,110 @@
 
 Welcome to ``iterproxy`` Documentation
 ==============================================================================
+You may seen the following code style in many ORM framework, this pattern provides a user friendly API to access items from the iterator object:
 
-Documentation for ``iterproxy``.
+.. code-block:: python
+
+    query(...).one()
+    query(...).one_or_none()
+    query(...).many(3)
+    query(...).all(5)
+    query(...).skip(5).many(3)
+
+`iterproxy <https://github.com/MacHu-GWU/iterproxy-project>`_ library can give any iterable object similar capabilities.
+
+
+Usage Example
+------------------------------------------------------------------------------
+Convert any iterable object to a ``IterProxy`` object:
+
+.. code-block:: python
+
+    from iterproxy import IterProxy
+
+    # Suppose you have an iterable object
+    iterator = range(10)
+
+    # Convert it to a IterProxy object
+    proxy = IterProxy(iterator)
+
+Access items from the ``IterProxy`` object:
+
+.. code-block:: python
+
+    proxy = IterProxy(range(10))
+
+    proxy.one() # it will return 0
+    proxy.many(3) # it will return [1, 2, 3]
+    proxy.skip(2).many(2) # it will skip [4, 5] and return [6, 7]
+    proxy.all() # it will return the rest [8, 9]
+    proxy.one_or_none() # it will return None
+    
+Another example:
+
+.. code-block:: python
+
+    proxy = IterProxy(range(10))
+    proxy.all() # it will return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+Of course the ``IterProxy`` itself is a iterator:
+
+.. code-block:: python
+
+    for i in IterProxy(range(10)): # 0, 1, 2, ...
+        ...
+
+You can use custom filter function to filter the result. Other than the nesting style in built-in ``filter`` function, it use chain pattern.
+
+.. code-block:: python
+
+    def is_odd(x):
+        return x % 2 == 1
+
+    def gte_5(x):
+        return x >= 5
+
+    # with IterProxy, you can chain them
+    # it returns you [5, 7, 9]
+    for i in IterProxy(range(10)).filter(is_odd).filter(gte_5):
+        print(i)
+
+    # or put them together, by default, it is logic and
+    for i in IterProxy(range(10)).filter(is_odd, gte_5):
+        print(i)
+
+    # with the built-in filter, this is not that intuitive
+    for i in filter(gte_5, filter(is_odd, range(10))):
+        ...
+
+You can also use compound logic ``and_``, ``or_``, ``not_``:
+
+.. code-block:: python
+
+    def is_odd(i):
+        return i % 2
+
+    def is_even(i):
+        return not (i % 2)
+
+    def lte_3(i):
+        return i <= 3
+
+    def gte_4(i):
+        return i >= 4
+
+    def lte_6(i):
+        return i <= 6
+
+    def gte_7(i):
+        return i >= 7
+
+    IterProxy(range(10)).filter(and_(gte_4, lte_6)).all() # [4, 5, 6]
+    IterProxy(range(10)).filter(or_(lte_3, gte_7)).all() # [0, 1, 2, 3, 7, 8, 9]
+    IterProxy(range(10)).filter(not_(is_odd)).all() # [0, 2, 4, 6, 8]
+
+    # of course you can nest and_, or_, not_
+    IterProxy(range(10)).filter(not_(and_(is_odd, or_(lte_3, gte_7)))).all() # [0, 2, 4, 5, 6, 8]
 
 
 .. _install:

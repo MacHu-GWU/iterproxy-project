@@ -4,7 +4,7 @@ Release and Version History
 ==============================================================================
 
 
-0.0.3 (TODO)
+Backlog
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **Features and Improvements**
 
@@ -15,18 +15,17 @@ Release and Version History
 **Miscellaneous**
 
 
-0.0.2 (TODO)
+0.1.1 (2022-12-26)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **Features and Improvements**
 
-**Minor Improvements**
-
-**Bugfixes**
+- First release on PyPI.
+- Add following public API:
+    - :class:`iterproxy.IterProxy <iterproxy.iterproxy.IterProxy>`
+    - :func:`iterproxy.and_ <iterproxy.iterproxy.and_>`
+    - :func:`iterproxy.or_ <iterproxy.iterproxy.or_>`
+    - :func:`iterproxy.not_ <iterproxy.iterproxy.not_>`
 
 **Miscellaneous**
 
-
-0.0.1 (2022-12-26)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- First release
+- 100% code coverage test.
