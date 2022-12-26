@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from iterproxy.iterproxy import IterProxy
+from iterproxy.iterproxy import IterProxy, and_, or_, not_
 
 
 def is_odd(i):
@@ -10,6 +10,18 @@ def is_odd(i):
 
 def is_even(i):
     return not (i % 2)
+
+
+def lte_3(i):
+    return i <= 3
+
+
+def gte_4(i):
+    return i >= 4
+
+
+def lte_6(i):
+    return i <= 6
 
 
 def gte_7(i):
@@ -84,6 +96,31 @@ class TestIterProxy:
         _ = proxy.one()
         with pytest.raises(PermissionError):
             proxy.filter(is_even)
+
+    def test_compound_filter(self):
+        proxy = IterProxy(range(10))
+        assert proxy.filter(and_(gte_4, lte_6)).all() == [4, 5, 6]
+
+        proxy = IterProxy(range(10))
+        assert proxy.filter(not_(and_(gte_4, lte_6))).all() == [0, 1, 2, 3, 7, 8, 9]
+
+        proxy = IterProxy(range(10))
+        assert proxy.filter(or_(lte_3, gte_7)).all() == [0, 1, 2, 3, 7, 8, 9]
+
+        proxy = IterProxy(range(10))
+        assert proxy.filter(not_(or_(lte_3, gte_7))).all() == [4, 5, 6]
+
+        proxy = IterProxy(range(10))
+        assert proxy.filter(and_(is_odd, or_(lte_3, gte_7))).all() == [1, 3, 7, 9]
+
+        proxy = IterProxy(range(10))
+        assert proxy.filter(not_(and_(is_odd, or_(lte_3, gte_7)))).all() == [0, 2, 4, 5, 6, 8]
+
+        proxy = IterProxy(range(10))
+        assert proxy.filter(or_(lte_3, and_(gte_4, lte_6))).all() == [0, 1, 2, 3, 4, 5, 6]
+
+        proxy = IterProxy(range(10))
+        assert proxy.filter(not_(or_(lte_3, and_(gte_4, lte_6)))).all() == [7, 8, 9]
 
 
 if __name__ == "__main__":

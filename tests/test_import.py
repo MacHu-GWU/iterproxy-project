@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from pytest import raises, approx
 
 
 def test():
     import iterproxy
-    pass
+
+    _ = iterproxy.IterProxy
+    _ = iterproxy.and_
+    _ = iterproxy.or_
+    _ = iterproxy.not_
 
 
 if __name__ == "__main__":

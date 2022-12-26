@@ -5,7 +5,34 @@ Improve iter_objects API by giving it better iterator that support filters.
 """
 
 from itertools import islice
-from typing import Iterable, Iterator, Union, Set
+from typing import Iterable, Iterator, Union, Set, Callable
+
+
+def and_(*funcs: Callable) -> Callable:
+    """
+    Produce a conjunction of filter function joined by logic and.
+
+    .. versionadded:: 0.1.1
+    """
+    return lambda i: all((f(i) for f in funcs))
+
+
+def or_(*funcs: Callable) -> Callable:
+    """
+    Produce a conjunction of filter function joined by logic or.
+
+    .. versionadded:: 0.1.1
+    """
+    return lambda i: any((f(i) for f in funcs))
+
+
+def not_(func: Callable) -> Callable:
+    """
+    Return a negation of the given filter function, i.e. ``not func(item)``.
+
+    .. versionadded:: 0.1.1
+    """
+    return lambda i: not func(i)
 
 
 class IterProxy:
@@ -89,15 +116,15 @@ class IterProxy:
             9
 
         .. versionadded:: 0.1.1
-
-        TODO: allow combination of logic and_, or_, not_
         """
         for func in funcs:
             if func not in self._filters_set:
                 try:
                     self._filters.append(func)
                 except AttributeError:
-                    raise PermissionError("you cannot update filters once iteration started!")
+                    raise PermissionError(
+                        "you cannot update filters once iteration started!"
+                    )
                 self._filters_set.add(func)
         return self
 

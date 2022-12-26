@@ -9,6 +9,11 @@ __author_email__ = "husanhe@gmail.com"
 __github_username__ = "MacHu-GWU"
 
 try:
-    from .iterproxy import IterProxy
+    from .iterproxy import (
+        IterProxy,
+        and_,
+        or_,
+        not_,
+    )
 except ImportError: # pragma: no cover
     pass
