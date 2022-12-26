@@ -49,7 +49,7 @@
     :target: https://pypi.org/pypi/iterproxy#files
 
 
-Welcome to ``iterproxy`` Documentation
+⏩ Welcome to ``iterproxy`` Documentation
 ==============================================================================
 You may seen the following code style in many ORM framework, this pattern provides a user friendly API to access items from the iterator object:
 
