@@ -4,11 +4,11 @@
 Improve iter_objects API by giving it better iterator that support filters.
 """
 
+import typing as T
 from itertools import islice
-from typing import Iterable, Iterator, Union, Set, Callable
 
 
-def and_(*funcs: Callable) -> Callable:
+def and_(*funcs: T.Callable) -> T.Callable:
     """
     Produce a conjunction of filter function joined by logic and.
 
@@ -17,7 +17,7 @@ def and_(*funcs: Callable) -> Callable:
     return lambda i: all((f(i) for f in funcs))
 
 
-def or_(*funcs: Callable) -> Callable:
+def or_(*funcs: T.Callable) -> T.Callable:
     """
     Produce a conjunction of filter function joined by logic or.
 
@@ -26,7 +26,7 @@ def or_(*funcs: Callable) -> Callable:
     return lambda i: any((f(i) for f in funcs))
 
 
-def not_(func: Callable) -> Callable:
+def not_(func: T.Callable) -> T.Callable:
     """
     Return a negation of the given filter function, i.e. ``not func(item)``.
 
@@ -53,11 +53,11 @@ class IterProxy:
     .. versionadded:: 0.1.1
     """
 
-    def __init__(self, iterable: Iterable):
-        self._iterable: Iterable = iterable
-        self._iterator: Union[Iterator, None] = None
-        self._filters: Union[list, tuple] = list()
-        self._filters_set: Set[callable] = set()
+    def __init__(self, iterable: T.Iterable):
+        self._iterable: T.Iterable = iterable
+        self._iterator: T.Union[T.Iterator, None] = None
+        self._filters: T.Union[list, tuple] = list()
+        self._filters_set: T.Set[callable] = set()
         self._is_frozen: bool = False
 
     def _to_iterator(self):
@@ -91,7 +91,7 @@ class IterProxy:
             if and_all_true:
                 return item
 
-    def filter(self, *funcs: callable):
+    def filter(self, *funcs: callable) -> "IterProxy":
         """
         Add one / multiple callable function that only takes one argument
         which is the object type that iterator will yeild, returns a bool value
@@ -128,7 +128,7 @@ class IterProxy:
                 self._filters_set.add(func)
         return self
 
-    def one(self):
+    def one(self) -> T.Any:
         """
         Return one item from the iterator.
 
@@ -159,7 +159,7 @@ class IterProxy:
         self._to_iterator()
         return next(self)
 
-    def one_or_none(self):
+    def one_or_none(self) -> T.Optional[T.Any]:
         """
         Return one item from the iterator. If nothing left in the iterator,
         it returns None.
@@ -225,10 +225,10 @@ class IterProxy:
 
         .. versionadded:: 0.1.1
         """
-        l = list(islice(self, k))
-        if len(l) == 0:
+        lst = list(islice(self, k))
+        if len(lst) == 0:
             raise StopIteration
-        return l
+        return lst
 
     def all(self) -> list:
         """
@@ -261,7 +261,7 @@ class IterProxy:
         self._to_iterator()
         return list(self)
 
-    def skip(self, k: int):
+    def skip(self, k: int) -> "IterProxy":
         """
         Skip next k items.
 
