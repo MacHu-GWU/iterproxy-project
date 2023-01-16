@@ -156,6 +156,40 @@ You can also use compound logic ``and_``, ``or_``, ``not_``:
     # of course you can nest and_, or_, not_
     IterProxy(range(10)).filter(not_(and_(is_odd, or_(lte_3, gte_7)))).all() # [0, 2, 4, 5, 6, 8]
 
+(Advanced) In order to enable type hint, you can do:
+
+.. code-block:: python
+
+    from iterproxy import IterProxy
+
+    class Dog:
+        def bark(self):
+            pass
+
+    class DogIterProxy(IterProxy[Dog]):
+        pass
+
+    many_dogs = [Dog(),]*10
+
+    proxy = DogIterProxy(many_dogs)
+
+    proxy.one_or_none().bark()
+    for dog in proxy.many(2):
+        dog.bark()
+    for dog in proxy.skip(1).many(2):
+        dog.bark()
+    for dog in proxy.all():
+        dog.bark()
+
+    filtered_proxy = DogIterProxy(many_dogs).filter(lambda dog: True)
+    filtered_proxy.one_or_none().bark()
+    for dog in filtered_proxy.many(2):
+        dog.bark()
+    for dog in filtered_proxy.skip(1).many(2):
+        dog.bark()
+    for dog in filtered_proxy.all():
+        dog.bark()
+
 
 .. _install:
 

@@ -122,6 +122,35 @@ class TestIterProxy:
         proxy = IterProxy(range(10))
         assert proxy.filter(not_(or_(lte_3, and_(gte_4, lte_6)))).all() == [7, 8, 9]
 
+    def test_type_hint(self):
+        class Dog:
+            def bark(self):
+                pass
+
+        class DogIterProxy(IterProxy[Dog]):
+             pass
+
+        many_dogs = [Dog(), ] * 10
+
+        proxy = DogIterProxy(many_dogs)
+
+        proxy.one_or_none().bark()
+        for dog in proxy.many(2):
+            dog.bark()
+        for dog in proxy.skip(1).many(2):
+            dog.bark()
+        for dog in proxy.all():
+            dog.bark()
+
+        filtered_proxy = DogIterProxy(many_dogs).filter(lambda dog: True)
+        filtered_proxy.one_or_none().bark()
+        for dog in filtered_proxy.many(2):
+            dog.bark()
+        for dog in filtered_proxy.skip(1).many(2):
+            dog.bark()
+        for dog in filtered_proxy.all():
+            dog.bark()
+
 
 if __name__ == "__main__":
     from iterproxy.tests import run_cov_test

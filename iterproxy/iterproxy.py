@@ -35,7 +35,10 @@ def not_(func: T.Callable) -> T.Callable:
     return lambda i: not func(i)
 
 
-class IterProxy:
+_T = T.TypeVar("_T")
+
+
+class IterProxy(T.Iterator[_T]):
     """
     An iterator proxy utility class provide client side in-memory filter.
     It is highly inspired by sqlalchemy Result Proxy that depends on SQL server
@@ -51,6 +54,10 @@ class IterProxy:
     - :meth:`skip`: skip k items
 
     .. versionadded:: 0.1.1
+
+    .. versionchanged:: 0.2.1
+
+        add type hint for all method
     """
 
     def __init__(self, iterable: T.Iterable):
@@ -71,11 +78,11 @@ class IterProxy:
             self._filters = tuple(self._filters)
             self._is_frozen = True
 
-    def __iter__(self):
+    def __iter__(self) -> T.Iterator[_T]:
         self._to_iterator()
         return self
 
-    def __next__(self):
+    def __next__(self) -> _T:
         while 1:
             try:
                 item = next(self._iterator)
@@ -91,7 +98,7 @@ class IterProxy:
             if and_all_true:
                 return item
 
-    def filter(self, *funcs: callable) -> "IterProxy":
+    def filter(self, *funcs: callable):
         """
         Add one / multiple callable function that only takes one argument
         which is the object type that iterator will yeild, returns a bool value
@@ -128,7 +135,7 @@ class IterProxy:
                 self._filters_set.add(func)
         return self
 
-    def one(self) -> T.Any:
+    def one(self) -> _T:
         """
         Return one item from the iterator.
 
@@ -159,7 +166,7 @@ class IterProxy:
         self._to_iterator()
         return next(self)
 
-    def one_or_none(self) -> T.Optional[T.Any]:
+    def one_or_none(self) -> T.Optional[_T]:
         """
         Return one item from the iterator. If nothing left in the iterator,
         it returns None.
@@ -198,7 +205,7 @@ class IterProxy:
         except StopIteration:
             return None
 
-    def many(self, k: int) -> list:
+    def many(self, k: int) -> T.List[_T]:
         """
         Return k item yield from iterator as a list.
 
@@ -230,7 +237,7 @@ class IterProxy:
             raise StopIteration
         return lst
 
-    def all(self) -> list:
+    def all(self) -> T.List[_T]:
         """
         Return all remaining item in the iterator as a list.
 
