@@ -15,6 +15,14 @@ Backlog
 **Miscellaneous**
 
 
+0.3.1 (2023-11-02)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**Features and Improvements**
+
+- Add following public API:
+    - :meth:`iterproxy.IterProxy.iter_chunks`
+
+
 0.2.1 (2023-01-16)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **Features and Improvements**

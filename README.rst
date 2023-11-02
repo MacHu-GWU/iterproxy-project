@@ -89,7 +89,14 @@ Access items from the ``IterProxy`` object:
     proxy.skip(2).many(2) # it will skip [4, 5] and return [6, 7]
     proxy.all() # it will return the rest [8, 9]
     proxy.one_or_none() # it will return None
-    
+
+``IterProxy.iter_chunks`` can group items into chunks having K items, the last chunk may have less items than K:
+
+.. code-block:: python
+
+    proxy = IterProxy(range(3))
+    list(proxy.iter_chunks(2)) # it will return [[0, 1], [2]]
+
 Another example:
 
 .. code-block:: python
@@ -166,7 +173,7 @@ You can also use compound logic ``and_``, ``or_``, ``not_``:
         def bark(self):
             pass
 
-    class DogIterProxy(IterProxy[Dog]):
+    class DogIterProxy(IterProxy[Dog]): # subclass from IterProxy[${YourTypeHint}]
         pass
 
     many_dogs = [Dog(),]*10
