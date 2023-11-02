@@ -237,6 +237,27 @@ class IterProxy(T.Iterator[_T]):
             raise StopIteration
         return lst
 
+    def iter_chunks(self, k: int) -> T.Iterable[T.List[_T]]:
+        """
+        Group items into chunk of k items, and yield each chunk until no more item
+        left. The last chunk may have less than k items.
+
+        Example:
+
+        .. code-block:: python
+
+            >>> proxy = IterProxy(range(3))
+            >>> list(proxy.iter_chunks(2))
+            [[0, 1], [2]]
+
+        .. versionadded:: 0.3.1
+        """
+        while True:
+            try:
+                yield self.many(k)
+            except StopIteration:
+                break
+
     def all(self) -> T.List[_T]:
         """
         Return all remaining item in the iterator as a list.

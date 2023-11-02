@@ -63,6 +63,11 @@ class TestIterProxy:
         with pytest.raises(StopIteration):
             iter_proxy.many(3)
 
+    def test_iter_chunks(self):
+        iter_proxy = IterProxy(range(3))
+        chunks = list(iter_proxy.iter_chunks(2))
+        assert chunks == [[0, 1], [2]]
+
     def test_skip_case_1(self):
         iter_proxy = IterProxy(range(5))
         iter_proxy.skip(2)
@@ -114,23 +119,48 @@ class TestIterProxy:
         assert proxy.filter(and_(is_odd, or_(lte_3, gte_7))).all() == [1, 3, 7, 9]
 
         proxy = IterProxy(range(10))
-        assert proxy.filter(not_(and_(is_odd, or_(lte_3, gte_7)))).all() == [0, 2, 4, 5, 6, 8]
+        assert proxy.filter(not_(and_(is_odd, or_(lte_3, gte_7)))).all() == [
+            0,
+            2,
+            4,
+            5,
+            6,
+            8,
+        ]
 
         proxy = IterProxy(range(10))
-        assert proxy.filter(or_(lte_3, and_(gte_4, lte_6))).all() == [0, 1, 2, 3, 4, 5, 6]
+        assert proxy.filter(or_(lte_3, and_(gte_4, lte_6))).all() == [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+        ]
 
         proxy = IterProxy(range(10))
         assert proxy.filter(not_(or_(lte_3, and_(gte_4, lte_6)))).all() == [7, 8, 9]
 
     def test_type_hint(self):
+        class IntIterProxy(IterProxy[int]):
+            pass
+
+        proxy = IntIterProxy(range(10))
+        _ = proxy.one_or_none()
+        _ = proxy.many(3)[0]
+        _ = list(proxy.iter_chunks(3))[0][0]
+
         class Dog:
             def bark(self):
                 pass
 
         class DogIterProxy(IterProxy[Dog]):
-             pass
+            pass
 
-        many_dogs = [Dog(), ] * 10
+        many_dogs = [
+            Dog(),
+        ] * 10
 
         proxy = DogIterProxy(many_dogs)
 
