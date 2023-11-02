@@ -95,7 +95,7 @@ class TestIterProxy:
 
         assert list(IterProxy(range(10)).filter(is_odd, gte_7)) == [7, 9]
 
-    def test_freeze_filters_after_itartion(self):
+    def test_freeze_filters_after_iteration(self):
         proxy = IterProxy(range(10))
         proxy.filter(is_odd)
         _ = proxy.one()
@@ -141,6 +141,14 @@ class TestIterProxy:
 
         proxy = IterProxy(range(10))
         assert proxy.filter(not_(or_(lte_3, and_(gte_4, lte_6)))).all() == [7, 8, 9]
+
+    def test_filter_and_many(self):
+        proxy = IterProxy(range(10))
+
+        def gte_than_5(i):
+            return i >= 5
+
+        assert proxy.filter(gte_than_5).many(3) == [5, 6, 7]
 
     def test_type_hint(self):
         class IntIterProxy(IterProxy[int]):
